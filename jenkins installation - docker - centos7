@@ -35,15 +35,32 @@ sudo systemctl start docker
 
 docker run hello-world
 
+#Create jenkins docker network
+docker network create jenkins
 
-# run jenkins
-mkdir -p /var/jenkins_home
-chown -R 1000:1000 /var/jenkins_home/
-docker run -p 8514:8080 -p 8515:50000 -v /var/jenkins_home:/var/jenkins_home -d --name jenkins jenkins/jenkins:lts
+#Create Master container
 
-# show endpoint
-echo 'Jenkins installed'
-echo 'You should now be able to access jenkins at: http://'$(curl -4 -s ifconfig.co)':8080'
+docker pull jenkins/jenkins:lts
 
-https://updates.jenkins.io/download/plugins/skip-certificate-check/1.0/skip-certificate-check.hpi
+docker run --name master \
+-p 5814:8080 -p 5815:50000 -d \
+--network jenkins \
+--network-alias master \
+-v /var/jenkins_home:/var/jenkins_home \
+-u root jenkins/jenkins:lts
+
+#
+
+
+#Resolve cert issues
+docker cp /path/to/cert.crt master:/
+
+docker exec -it master /bin/bash
+
+keytool -importcert -alias mycert -storepass changeit -file cert.crt
+keytool -importcert -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -file /cert.crt -alias mycert
+
+keytool -list
+
+docker restart master
 
