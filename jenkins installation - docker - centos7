@@ -45,4 +45,5 @@ docker run -p 8514:8080 -p 8515:50000 -v /var/jenkins_home:/var/jenkins_home -d 
 echo 'Jenkins installed'
 echo 'You should now be able to access jenkins at: http://'$(curl -4 -s ifconfig.co)':8080'
 
+https://updates.jenkins.io/download/plugins/skip-certificate-check/1.0/skip-certificate-check.hpi
 
